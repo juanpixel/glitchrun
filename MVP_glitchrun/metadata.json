@@ -1,0 +1,5 @@
+{
+  "name": "GLITCHRUN",
+  "description": "A pixel-glitch infinite runner where error is identity.",
+  "requestFramePermissions": []
+}
