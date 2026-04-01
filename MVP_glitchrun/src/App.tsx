@@ -3,22 +3,28 @@ import { PRESETS } from './constants/presets';
 import { GameState } from './game/types';
 import { useGameLoop } from './hooks/useGameLoop';
 import { useControls } from './hooks/useControls';
+import { isHighScore, saveScore } from './utils/scoreStorage';
 
 // Screens
 import { MenuScreen } from './screens/MenuScreen';
 import { CreatorScreen } from './screens/CreatorScreen';
 import { GameOverScreen } from './screens/GameOverScreen';
 import { InstructionsScreen } from './screens/InstructionsScreen';
+import { RecordInputScreen } from './screens/RecordInputScreen';
+import { LeaderboardScreen } from './screens/LeaderboardScreen';
 
 // Components
 import { HUD } from './components/HUD';
 
+type UIStatus = 'START' | 'CREATOR' | 'PLAYING' | 'GAMEOVER' | 'INSTRUCTIONS' | 'RECORD_INPUT' | 'LEADERBOARD';
+
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [uiStatus, setUiStatus] = useState<'START' | 'CREATOR' | 'PLAYING' | 'GAMEOVER' | 'INSTRUCTIONS'>('START');
+  const [uiStatus, setUiStatus] = useState<UIStatus>('START');
   const [scores, setScores] = useState({ p1: 0, p2: 0 });
   const [highScore, setHighScore] = useState(0);
   const [gameMode, setGameMode] = useState<'SINGLE' | 'COOP'>('SINGLE');
+  const [pendingScore, setPendingScore] = useState(0);
 
   const gameStateRef = useRef<GameState>({
     players: [
@@ -35,8 +41,16 @@ export default function App() {
   });
 
   const onGameOver = useCallback((maxScore: number) => {
-    setUiStatus('GAMEOVER');
     gameStateRef.current.status = 'GAMEOVER';
+    
+    // Check for high score
+    if (isHighScore(gameStateRef.current.gameMode, maxScore)) {
+      setPendingScore(maxScore);
+      setUiStatus('RECORD_INPUT');
+    } else {
+      setUiStatus('GAMEOVER');
+    }
+
     if (maxScore > highScore) setHighScore(maxScore);
   }, [highScore]);
 
@@ -90,6 +104,11 @@ export default function App() {
     setUiStatus('START');
   };
 
+  const handleRecordSave = (initials: string) => {
+    saveScore(gameMode, initials, pendingScore);
+    setUiStatus('GAMEOVER');
+  };
+
   return (
     <div className="relative w-screen h-screen overflow-hidden select-none bg-[#080C08]">
       <div className="grid-overlay" />
@@ -112,11 +131,24 @@ export default function App() {
         <MenuScreen 
           onSelectMode={handleModeSelect} 
           onShowInstructions={() => setUiStatus('INSTRUCTIONS')}
+          onShowLeaderboard={() => setUiStatus('LEADERBOARD')}
         />
       )}
 
       {uiStatus === 'INSTRUCTIONS' && (
         <InstructionsScreen onBack={handleExit} />
+      )}
+
+      {uiStatus === 'LEADERBOARD' && (
+        <LeaderboardScreen onBack={handleExit} />
+      )}
+
+      {uiStatus === 'RECORD_INPUT' && (
+        <RecordInputScreen 
+          score={pendingScore} 
+          gameMode={gameMode} 
+          onConfirm={handleRecordSave} 
+        />
       )}
 
       {uiStatus === 'CREATOR' && (

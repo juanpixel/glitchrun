@@ -26,6 +26,8 @@ export const useGameLoop = (
     return () => window.removeEventListener('resize', resize);
   }, [canvasRef]);
 
+  const hasCalledGameOver = useRef(false);
+
   // Game Loop
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -33,6 +35,10 @@ export const useGameLoop = (
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    if (stateRef.current.status !== 'GAMEOVER') {
+      hasCalledGameOver.current = false;
+    }
 
     const loop = (time: number) => {
       const state = stateRef.current;
@@ -47,7 +53,8 @@ export const useGameLoop = (
       } else {
         renderGame(ctx, state, canvas, time);
         
-        if (state.status === 'GAMEOVER') {
+        if (state.status === 'GAMEOVER' && !hasCalledGameOver.current) {
+          hasCalledGameOver.current = true;
           const maxScore = Math.max(...state.players.map(p => p.score));
           onGameOver(Math.floor(maxScore));
         }
