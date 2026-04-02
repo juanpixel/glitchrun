@@ -13,6 +13,11 @@
   --void-2: #0D1A0D;
   --void-3: #1a2e1a;
   --amber: #FAC775;
+  --white: #FFFFFF;
+  --purple: #7F77DD;
+  --orange: #FF8C00;
+  --panel-bg: rgba(13, 26, 13, 0.9);
+  --border-glow: rgba(57, 255, 20, 0.1);
 }
 
 body {
@@ -176,4 +181,99 @@ button:active {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--matrix);
+}
+
+/* Tab Styles */
+.tab-button {
+  flex: 1;
+  border-bottom: 2px solid transparent;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  opacity: 1;
+  border-bottom-color: var(--matrix);
+  background: var(--void-2);
+}
+
+/* Community Card Styles */
+.community-card {
+  background: var(--void-2);
+  border: 1px solid var(--void-3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.community-card:hover {
+  border-color: var(--matrix);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px var(--border-glow);
+}
+
+.community-card .sprite-preview {
+  background: var(--void);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  padding: 4px;
+}
+
+/* Animations */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.glitch-border {
+  position: relative;
+}
+
+.glitch-border::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--matrix);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.glitch-border:hover::after {
+  opacity: 0.5;
+  animation: border-glitch 0.3s infinite;
+}
+
+@keyframes border-glitch {
+  0% { clip-path: inset(0 0 90% 0); }
+  20% { clip-path: inset(80% 0 0 0); }
+  40% { clip-path: inset(0 90% 0 0); }
+  60% { clip-path: inset(0 0 0 80%); }
+  80% { clip-path: inset(40% 0 40% 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+/* Tooltip / Popover */
+.tooltip-container {
+  position: absolute;
+  z-index: 100;
+  background: var(--void-2);
+  border: 2px solid var(--matrix);
+  padding: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px var(--matrix);
+  animation: tooltip-in 0.2s ease-out;
+}
+
+@keyframes tooltip-in {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
