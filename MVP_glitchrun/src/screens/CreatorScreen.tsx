@@ -34,8 +34,8 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
   const [isPublishing, setIsPublishing] = useState(false);
   
   // New character metadata
-  const [charName, setCharName] = useState('NEW_ENTITY');
-  const [creatorName, setCreatorName] = useState('ANON_RUNNER');
+  const [charName, setCharName] = useState('NUEVO_PERSONAJE');
+  const [creatorName, setCreatorName] = useState('CREADOR_ANONIMO');
 
   const activeSprite = editingPlayer === 1 ? p1Sprite : p2Sprite;
   const activeSetter = editingPlayer === 1 ? setP1Sprite : setP2Sprite;
@@ -253,7 +253,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
             <span className="text-[14px] text-deep tracking-[2px]">PUBLICAR EN COMUNIDAD</span>
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 flex flex-col gap-2">
-                <label className="text-[10px] text-deep opacity-70">NOMBRE_ENTIDAD</label>
+                <label className="text-[10px] text-deep opacity-70">NOMBRE_PERSONAJE</label>
                 <input 
                   value={charName}
                   onChange={(e) => setCharName(e.target.value)}
@@ -261,7 +261,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
                 />
               </div>
               <div className="flex-1 flex flex-col gap-2">
-                <label className="text-[10px] text-deep opacity-70">RUNNER_ID</label>
+                <label className="text-[10px] text-deep opacity-70">CREADOR</label>
                 <input 
                   value={creatorName}
                   onChange={(e) => setCreatorName(e.target.value)}
