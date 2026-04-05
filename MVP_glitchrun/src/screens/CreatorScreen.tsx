@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { COLORS, PALETTE } from '../constants/colors';
 import { PRESETS } from '../constants/presets';
-import { COMMUNITY_SPRITES, CommunitySprite } from '../constants/communitySprites';
+import { supabase } from '../lib/supabase';
+
+interface CommunitySprite {
+  id: string;
+  name: string;
+  creator: string;
+  likes: number;
+  sprite_data: string[][];
+}
 
 interface CreatorScreenProps {
   gameMode: 'SINGLE' | 'COOP';
@@ -19,9 +27,15 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
   const [difficulty, setDifficulty] = useState<'EASY' | 'NORMAL' | 'HARD'>('NORMAL');
   const [isDrawing, setIsDrawing] = useState(false);
   
-  const [communityFilter, setCommunityFilter] = useState<'VOTADOS' | 'RECIENTES' | 'ALEATORIO'>('VOTADOS');
+  const [communityFilter, setCommunityFilter] = useState<'VOTADOS' | 'RECIENTES' | 'ALEATORIO'>('RECIENTES');
+  const [dbSprites, setDbSprites] = useState<CommunitySprite[]>([]);
   const [tooltipSprite, setTooltipSprite] = useState<CommunitySprite | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [isPublishing, setIsPublishing] = useState(false);
+  
+  // New character metadata
+  const [charName, setCharName] = useState('NEW_ENTITY');
+  const [creatorName, setCreatorName] = useState('ANON_RUNNER');
 
   const activeSprite = editingPlayer === 1 ? p1Sprite : p2Sprite;
   const activeSetter = editingPlayer === 1 ? setP1Sprite : setP2Sprite;
@@ -47,6 +61,60 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
       }
     }
     return grid;
+  };
+
+  const fetchCommunity = async () => {
+    let query = supabase.from('characters').select('*');
+    
+    if (communityFilter === 'VOTADOS') {
+      query = query.order('likes', { ascending: false });
+    } else if (communityFilter === 'RECIENTES') {
+      query = query.order('created_at', { ascending: false });
+    } else {
+      // Random is tricky with Supabase, we'll just fetch latest and shuffle in JS
+      query = query.order('created_at', { ascending: false });
+    }
+
+    const { data, error } = await query.limit(10);
+    if (!error && data) {
+      setDbSprites(data as any);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchCommunity();
+  }, [communityFilter]);
+
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    const { error } = await supabase.from('characters').insert([
+      {
+        name: charName.toUpperCase(),
+        creator: creatorName.toUpperCase(),
+        sprite_data: activeSprite,
+        likes: 0
+      }
+    ]);
+
+    if (!error) {
+      fetchCommunity();
+      alert('¡PERSONAJE_PUBLICADO_CON_EXITO!');
+    } else {
+      console.error(error);
+      alert('ERROR_AL_PUBLICAR');
+    }
+    setIsPublishing(false);
+  };
+
+  const handleLike = async (id: string, currentLikes: number) => {
+    const { error } = await supabase
+      .from('characters')
+      .update({ likes: currentLikes + 1 })
+      .eq('id', id);
+    
+    if (!error) {
+      fetchCommunity();
+    }
   };
 
   const randomizeCharacter = (playerNum: 1 | 2) => {
@@ -76,7 +144,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
 
   const handleCommunityClick = (e: React.MouseEvent, sprite: CommunitySprite) => {
     if (gameMode === 'SINGLE') {
-      setP1Sprite(sprite.data);
+      setP1Sprite(sprite.sprite_data);
     } else {
       setTooltipSprite(sprite);
       setTooltipPos({ x: e.clientX, y: e.clientY });
@@ -151,7 +219,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
 
             {/* PALETTE 2x4 */}
             <div className="flex flex-col gap-4">
-              <span className="text-[10px] text-deep tracking-[2px]">PALETA DE COLORES</span>
+              <span className="text-[14px] text-deep tracking-[2px]">PALETA DE COLORES</span>
               <div className="grid grid-cols-4 gap-2">
                 {PALETTE.map(color => (
                   <button
@@ -179,6 +247,36 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
               ALEATORIO
             </button>
           </div>
+
+          {/* PUBLISH SECTION */}
+          <div className="mt-8 pt-8 border-t border-void3/30 flex flex-col gap-4">
+            <span className="text-[14px] text-deep tracking-[2px]">PUBLICAR EN COMUNIDAD</span>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 flex flex-col gap-2">
+                <label className="text-[10px] text-deep opacity-70">NOMBRE_ENTIDAD</label>
+                <input 
+                  value={charName}
+                  onChange={(e) => setCharName(e.target.value)}
+                  className="bg-void border border-void3 p-2 text-matrix font-mono text-xs uppercase outline-none focus:border-matrix"
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-2">
+                <label className="text-[10px] text-deep opacity-70">RUNNER_ID</label>
+                <input 
+                  value={creatorName}
+                  onChange={(e) => setCreatorName(e.target.value)}
+                  className="bg-void border border-void3 p-2 text-matrix font-mono text-xs uppercase outline-none focus:border-matrix"
+                />
+              </div>
+              <button 
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className={`px-8 py-2 bg-deep text-void font-bold text-xs tracking-[2px] self-end h-[34px] hover:bg-matrix transition-all ${isPublishing ? 'opacity-50' : ''}`}
+              >
+                {isPublishing ? 'ENVIANDO...' : 'PUBLICAR'}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT: GAME SETTINGS */}
@@ -187,7 +285,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
             <h2 className="text-matrix tracking-[4px] text-left" style={{ fontSize: '18px' }}>CONFIGURACIÓN DEL JUEGO</h2>
             
             <div className="flex flex-col gap-4">
-              <span className="text-[10px] text-deep tracking-[2px]">DIFICULTAD</span>
+              <span className="text-[14px] text-deep tracking-[2px]">DIFICULTAD</span>
               <div className="flex gap-2">
                 {(['EASY', 'NORMAL', 'HARD'] as const).map(d => (
                   <button
@@ -215,11 +313,12 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
       <div className="w-full max-w-7xl mx-auto px-6 pt-24 pb-32 z-10 border-t border-void3/30 mt-12">
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
           <div>
-            <h2 className="text-xl text-matrix text-left tracking-[4px] mb-2 uppercase">Creados por la comunidad</h2>
-            <p className="text-deep text-[10px] tracking-[2px]">INSPIRACIÓN DE OTROS RUNNERS</p>
+            <h2 className="text-matrix tracking-[4px] text-left uppercase" style={{ fontSize: '18px' }}>Creados por la comunidad</h2>
+            <p className="text-deep text-[14px] tracking-[2px]">INSPIRACIÓN DE OTROS RUNNERS</p>
           </div>
           
-          <div className="flex gap-4 border border-void3 p-1">
+          {/* Desktop Tabs */}
+          <div className="hidden md:flex gap-4 border border-void3 p-1">
             {(['VOTADOS', 'RECIENTES', 'ALEATORIO'] as const).map(f => (
               <button
                 key={f}
@@ -230,29 +329,58 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
               </button>
             ))}
           </div>
+
+          {/* Mobile Dropdown */}
+          <select
+            className="md:hidden w-full h-[40px] bg-[#0D1A0D] text-[#39FF14] border-[0.5px] border-[#1D9E75] font-mono uppercase tracking-[2px] px-4 cursor-pointer outline-none appearance-none"
+            value={communityFilter}
+            onChange={(e) => setCommunityFilter(e.target.value as any)}
+            style={{ 
+              backgroundImage: 'linear-gradient(45deg, transparent 50%, #39FF14 50%), linear-gradient(135deg, #39FF14 50%, transparent 50%)',
+              backgroundPosition: 'calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px)',
+              backgroundSize: '5px 5px, 5px 5px',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
+            <option value="VOTADOS">Más votados</option>
+            <option value="RECIENTES">Más recientes</option>
+            <option value="ALEATORIO">Aleatorio</option>
+          </select>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {COMMUNITY_SPRITES.filter(s => s.category === communityFilter || communityFilter === 'ALEATORIO').map(sprite => (
+          {dbSprites.map(sprite => (
             <div 
               key={sprite.id} 
               className="community-card group"
-              onClick={(e) => handleCommunityClick(e, sprite)}
             >
-              <div className="sprite-preview">
-                {sprite.data.flat().map((pixel, i) => (
+              <div 
+                className="sprite-preview"
+                onClick={(e) => handleCommunityClick(e, sprite)}
+              >
+                {sprite.sprite_data.flat().map((pixel, i) => (
                   <div key={i} style={{ backgroundColor: pixel || 'transparent' }} />
                 ))}
               </div>
               <div className="p-3 border-t border-void3 flex flex-col gap-1 bg-void3/20">
                 <div className="flex justify-between items-baseline">
                   <span className="text-[9px] font-bold text-matrix truncate mr-1 uppercase">{sprite.name}</span>
-                  <span className="text-[9px] text-error font-bold whitespace-nowrap">♥ {sprite.likes}</span>
+                  <button 
+                    onClick={() => handleLike(sprite.id, sprite.likes)}
+                    className="text-[9px] text-error font-bold whitespace-nowrap bg-transparent border-none p-0 cursor-pointer hover:scale-110 active:scale-90 transition-all"
+                  >
+                    ♥ {sprite.likes}
+                  </button>
                 </div>
                 <span className="text-[8px] text-deep tracking-[1px] opacity-70 uppercase">{sprite.creator}</span>
               </div>
             </div>
           ))}
+          {dbSprites.length === 0 && (
+             <div className="col-span-full py-20 text-center text-deep animate-pulse tracking-[4px]">
+               _BUSCANDO_DATOS_EN_EL_NUCLEO_
+             </div>
+          )}
         </div>
       </div>
 
@@ -270,8 +398,8 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
             <button onClick={() => setTooltipSprite(null)} className="p-1 border-none min-h-0 text-error">×</button>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => loadCommunitySprite(tooltipSprite.data, 1)} className="flex-1 py-2 bg-void border border-void3 text-[9px]">PERSONAJE_1</button>
-            <button onClick={() => loadCommunitySprite(tooltipSprite.data, 2)} className="flex-1 py-2 bg-void border border-void3 text-[9px]">PERSONAJE_2</button>
+            <button onClick={() => loadCommunitySprite(tooltipSprite.sprite_data, 1)} className="flex-1 py-2 bg-void border border-void3 text-[9px]">PERSONAJE_1</button>
+            <button onClick={() => loadCommunitySprite(tooltipSprite.sprite_data, 2)} className="flex-1 py-2 bg-void border border-void3 text-[9px]">PERSONAJE_2</button>
           </div>
         </div>
       )}

@@ -40,11 +40,12 @@ export default function App() {
     difficulty: 'NORMAL'
   });
 
-  const onGameOver = useCallback((maxScore: number) => {
+  const onGameOver = useCallback(async (maxScore: number) => {
     gameStateRef.current.status = 'GAMEOVER';
     
     // Check for high score
-    if (isHighScore(gameStateRef.current.gameMode, maxScore)) {
+    const isHigh = await isHighScore(gameStateRef.current.gameMode, maxScore);
+    if (isHigh) {
       setPendingScore(maxScore);
       setUiStatus('RECORD_INPUT');
     } else {
@@ -104,8 +105,8 @@ export default function App() {
     setUiStatus('START');
   };
 
-  const handleRecordSave = (initials: string) => {
-    saveScore(gameMode, initials, pendingScore);
+  const handleRecordSave = async (initials: string) => {
+    await saveScore(gameMode, initials, pendingScore);
     setUiStatus('GAMEOVER');
   };
 

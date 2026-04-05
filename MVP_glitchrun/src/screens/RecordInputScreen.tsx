@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { COLORS } from '../constants/colors';
 
 interface RecordInputScreenProps {
@@ -11,35 +11,28 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
   const [p1Initials, setP1Initials] = useState('');
   const [p2Initials, setP2Initials] = useState('');
   const [activePlayer, setActivePlayer] = useState<1 | 2>(1);
+  const inputRef = useRef<HTMLInputElement>(null);
   const maxLength = 3;
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Prevent scrolling
       if (['ArrowUp', 'ArrowDown', ' '].includes(e.key)) e.preventDefault();
 
-      const key = e.key.toUpperCase();
-      
-      // Handle letters and numbers
-      if (/^[A-Z0-9]$/.test(key)) {
-        if (activePlayer === 1 && p1Initials.length < maxLength) {
-          setP1Initials(prev => prev + key);
-        } else if (activePlayer === 2 && p2Initials.length < maxLength) {
-          setP2Initials(prev => prev + key);
-        }
-      } 
-      // Handle backspace
-      else if (e.key === 'Backspace') {
-        if (activePlayer === 1) setP1Initials(prev => prev.slice(0, -1));
-        else setP2Initials(prev => prev.slice(0, -1));
-      } 
-      // Handle Enter
-      else if (e.key === 'Enter') {
+      if (e.key === 'Enter') {
         if (gameMode === 'SINGLE') {
           if (p1Initials.length === maxLength) onConfirm(p1Initials);
         } else {
           if (activePlayer === 1 && p1Initials.length === maxLength) {
             setActivePlayer(2);
+            // Clear input for second player
+            if (inputRef.current) inputRef.current.value = '';
           } else if (activePlayer === 2 && p2Initials.length === maxLength) {
             onConfirm(`${p1Initials}+${p2Initials}`);
           }
@@ -50,6 +43,12 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [p1Initials, p2Initials, activePlayer, gameMode, onConfirm]);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, maxLength);
+    if (activePlayer === 1) setP1Initials(val);
+    else setP2Initials(val);
+  };
 
   const renderSlot = (char: string, isActive: boolean) => (
     <div className={`
@@ -78,7 +77,20 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
           {score.toString().padStart(6, '0')}
         </div>
 
-        <div className="flex flex-col gap-12 w-full items-center">
+        <div 
+          className="flex flex-col gap-12 w-full items-center cursor-pointer"
+          onClick={() => inputRef.current?.focus()}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+            value={activePlayer === 1 ? p1Initials : p2Initials}
+            onChange={handleInputChange}
+            inputMode="text"
+            autoComplete="off"
+            autoFocus
+          />
           {/* Player 1 Input */}
           <div className={`flex flex-col items-center transition-opacity ${activePlayer === 2 ? 'opacity-40' : 'opacity-100'}`}>
             <span className="text-[10px] text-[#1D9E75] tracking-[4px] mb-4">
@@ -105,7 +117,7 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
         </div>
 
         <div className="mt-16 flex flex-col items-center animate-bounce">
-          <p className="text-[10px] text-[#1D9E75] tracking-[2px] mb-2 font-mono">
+          <p className="text-[14px] text-[#1D9E75] tracking-[2px] mb-2 font-mono">
             {activePlayer === 1 && !isP1Done && 'TYPE_LETTERS_TO_CONTINUE_'}
             {activePlayer === 1 && isP1Done && gameMode === 'SINGLE' && 'PRESS_ENTER_TO_SAVE_'}
             {activePlayer === 1 && isP1Done && gameMode === 'COOP' && 'PRESS_ENTER_FOR_P2_'}

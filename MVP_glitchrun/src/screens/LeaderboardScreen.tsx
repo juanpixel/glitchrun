@@ -10,7 +10,11 @@ export const LeaderboardScreen = ({ onBack }: LeaderboardScreenProps) => {
   const [scores, setScores] = useState<ScoreEntry[]>([]);
 
   useEffect(() => {
-    setScores(getScores(activeMode));
+    const fetchScores = async () => {
+      const data = await getScores(activeMode);
+      setScores(data);
+    };
+    fetchScores();
   }, [activeMode]);
 
   return (
@@ -74,7 +78,7 @@ export const LeaderboardScreen = ({ onBack }: LeaderboardScreenProps) => {
         </button>
       </div>
       
-      <div className="mt-8 text-[10px] text-[#1D9E75] tracking-[2px] opacity-50 underline cursor-not-allowed">
+      <div className="mt-8 text-[14px] text-[#1D9E75] tracking-[2px] opacity-50 underline cursor-not-allowed">
         SYNCING_WITH_CORE_DATABASE...
       </div>
     </div>
