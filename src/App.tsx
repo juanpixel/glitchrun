@@ -15,6 +15,7 @@ import { LeaderboardScreen } from './screens/LeaderboardScreen';
 
 // Components
 import { HUD } from './components/HUD';
+import { MobileControls } from './components/MobileControls';
 
 type UIStatus = 'START' | 'CREATOR' | 'PLAYING' | 'GAMEOVER' | 'INSTRUCTIONS' | 'RECORD_INPUT' | 'LEADERBOARD';
 
@@ -28,8 +29,8 @@ export default function App() {
 
   const gameStateRef = useRef<GameState>({
     players: [
-      { y: 0, vy: 0, isJumping: false, frame: 0, animTimer: 0, sprite: PRESETS.PLAYER_001, score: 0, isAlive: true, offsetX: 0 },
-      { y: 0, vy: 0, isJumping: false, frame: 0, animTimer: 0, sprite: PRESETS.PLAYER_002, score: 0, isAlive: false, offsetX: -60 }
+      { y: 0, vy: 0, isJumping: false, frame: 0, animTimer: 0, sprite: PRESETS.FANTASMA, score: 0, isAlive: true, offsetX: 0 },
+      { y: 0, vy: 0, isJumping: false, frame: 0, animTimer: 0, sprite: PRESETS.CALAVERA, score: 0, isAlive: false, offsetX: -60 }
     ],
     obstacles: [],
     speed: 6,
@@ -123,6 +124,10 @@ export default function App() {
           gameMode={gameMode}
           onHome={handleExit}
         />
+      )}
+
+      {uiStatus === 'PLAYING' && gameMode === 'COOP' && (
+        <MobileControls gameStateRef={gameStateRef} />
       )}
 
       <canvas ref={canvasRef} className="w-full h-full" />

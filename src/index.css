@@ -231,6 +231,61 @@ button:active {
   background: var(--matrix);
 }
 
+/* Mobile Gameplay Controls (COOP) */
+.mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  z-index: 100;
+  background: linear-gradient(to top, rgba(8, 12, 8, 0.8), transparent);
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: flex;
+  }
+}
+
+.jump-btn {
+  flex: 1;
+  height: 100%;
+  border: 1px solid var(--void-3);
+  background: rgba(13, 26, 13, 0.4);
+  backdrop-filter: blur(4px);
+  color: var(--matrix);
+  font-family: var(--font-mono);
+  font-weight: 900;
+  font-size: 24px;
+  letter-spacing: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  touch-action: none;
+  transition: all 0.1s steps(2);
+}
+
+.jump-btn-p1.pressed {
+  background: var(--matrix) !important;
+  color: var(--void) !important;
+  box-shadow: 0 0 30px var(--matrix);
+}
+
+.jump-btn-p2.pressed {
+  background: var(--glitch) !important;
+  color: var(--void) !important;
+  box-shadow: 0 0 30px var(--glitch);
+}
+
+.jump-btn:disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed;
+}
+
 /* Tab Styles */
 .tab-button {
   flex: 1;
