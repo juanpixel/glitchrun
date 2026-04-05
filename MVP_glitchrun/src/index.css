@@ -26,7 +26,8 @@ body {
   font-family: var(--font-mono);
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
   text-transform: uppercase;
   letter-spacing: 2px;
   width: 100%;
@@ -53,7 +54,7 @@ h2 {
 .grid-overlay {
   position: fixed;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(to right, var(--void-3) 1px, transparent 1px),
     linear-gradient(to bottom, var(--void-3) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -77,19 +78,51 @@ h2 {
 }
 
 @keyframes scan {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 /* Glitch Effects */
 @keyframes glitch-anim {
-  0% { clip: rect(44px, 450px, 56px, 0); transform: skew(0.3deg); }
-  5% { clip: rect(62px, 450px, 12px, 0); transform: skew(0.1deg); }
-  10% { clip: rect(35px, 450px, 88px, 0); transform: skew(0.5deg); }
-  15% { clip: rect(10px, 450px, 20px, 0); transform: skew(0.8deg); }
-  20% { clip: rect(45px, 450px, 92px, 0); transform: skew(0.3deg); }
-  25% { clip: rect(70px, 450px, 60px, 0); transform: skew(0.1deg); }
-  100% { clip: rect(0, 0, 0, 0); transform: skew(0); }
+  0% {
+    clip: rect(44px, 450px, 56px, 0);
+    transform: skew(0.3deg);
+  }
+
+  5% {
+    clip: rect(62px, 450px, 12px, 0);
+    transform: skew(0.1deg);
+  }
+
+  10% {
+    clip: rect(35px, 450px, 88px, 0);
+    transform: skew(0.5deg);
+  }
+
+  15% {
+    clip: rect(10px, 450px, 20px, 0);
+    transform: skew(0.8deg);
+  }
+
+  20% {
+    clip: rect(45px, 450px, 92px, 0);
+    transform: skew(0.3deg);
+  }
+
+  25% {
+    clip: rect(70px, 450px, 60px, 0);
+    transform: skew(0.1deg);
+  }
+
+  100% {
+    clip: rect(0, 0, 0, 0);
+    transform: skew(0);
+  }
 }
 
 .glitch-text {
@@ -139,7 +172,8 @@ button {
   padding: 12px 24px;
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 14px; /* Heuristic: Uniform size */
+  font-size: 14px;
+  /* Heuristic: Uniform size */
   letter-spacing: 2px;
   cursor: pointer;
   transition: all 0.1s steps(4);
@@ -147,13 +181,15 @@ button {
   position: relative;
   overflow: hidden;
   max-width: 100%;
-  min-height: 48px; /* Touch target size */
+  min-height: 48px;
+  /* Touch target size */
 }
 
 @media (max-width: 640px) {
   button {
     padding: 10px 16px;
-    font-size: 14px; /* Maintain 14px even on mobile */
+    font-size: 14px;
+    /* Maintain 14px even on mobile */
   }
 }
 
@@ -173,12 +209,15 @@ button:active {
 ::-webkit-scrollbar {
   width: 4px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--void);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--void-3);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--matrix);
 }
@@ -254,12 +293,29 @@ button:active {
 }
 
 @keyframes border-glitch {
-  0% { clip-path: inset(0 0 90% 0); }
-  20% { clip-path: inset(80% 0 0 0); }
-  40% { clip-path: inset(0 90% 0 0); }
-  60% { clip-path: inset(0 0 0 80%); }
-  80% { clip-path: inset(40% 0 40% 0); }
-  100% { clip-path: inset(0 0 0 0); }
+  0% {
+    clip-path: inset(0 0 90% 0);
+  }
+
+  20% {
+    clip-path: inset(80% 0 0 0);
+  }
+
+  40% {
+    clip-path: inset(0 90% 0 0);
+  }
+
+  60% {
+    clip-path: inset(0 0 0 80%);
+  }
+
+  80% {
+    clip-path: inset(40% 0 40% 0);
+  }
+
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 /* Tooltip / Popover */
@@ -274,6 +330,13 @@ button:active {
 }
 
 @keyframes tooltip-in {
-  from { opacity: 0; transform: scale(0.9) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
