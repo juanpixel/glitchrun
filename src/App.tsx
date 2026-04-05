@@ -130,7 +130,10 @@ export default function App() {
         <MobileControls gameStateRef={gameStateRef} />
       )}
 
-      <canvas ref={canvasRef} className="w-full h-full" />
+      <canvas 
+        ref={canvasRef} 
+        className={`w-full h-full transition-transform duration-500 ${uiStatus === 'PLAYING' && gameMode === 'COOP' ? 'canvas-mobile-shift' : ''}`} 
+      />
 
       {/* Overlays */}
       {uiStatus === 'START' && (

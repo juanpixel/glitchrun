@@ -19,19 +19,22 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
       inputRef.current?.focus();
     }, 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [activePlayer]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['ArrowUp', 'ArrowDown', ' '].includes(e.key)) e.preventDefault();
-
-      if (e.key === 'Enter') {
+      
+      // Support Tab and Enter for navigation/confirmation
+      if (e.key === 'Tab' || e.key === 'Enter') {
+        e.preventDefault(); // Prevent focus cycling for Tab
+        
         if (gameMode === 'SINGLE') {
           if (p1Initials.length === maxLength) onConfirm(p1Initials);
         } else {
           if (activePlayer === 1 && p1Initials.length === maxLength) {
             setActivePlayer(2);
-            // Clear input for second player
+            // Clear internal buffer for the second player
             if (inputRef.current) inputRef.current.value = '';
           } else if (activePlayer === 2 && p2Initials.length === maxLength) {
             onConfirm(`${p1Initials}+${p2Initials}`);
@@ -119,10 +122,10 @@ export const RecordInputScreen = ({ score, gameMode, onConfirm }: RecordInputScr
         <div className="mt-16 flex flex-col items-center animate-bounce">
           <p className="text-[14px] text-[#1D9E75] tracking-[2px] mb-2 font-mono">
             {activePlayer === 1 && !isP1Done && 'TYPE_LETTERS_TO_CONTINUE_'}
-            {activePlayer === 1 && isP1Done && gameMode === 'SINGLE' && 'PRESS_ENTER_TO_SAVE_'}
-            {activePlayer === 1 && isP1Done && gameMode === 'COOP' && 'PRESS_ENTER_FOR_P2_'}
+            {activePlayer === 1 && isP1Done && gameMode === 'SINGLE' && 'PRESS_ENTER_OR_TAB_TO_SAVE_'}
+            {activePlayer === 1 && isP1Done && gameMode === 'COOP' && 'PRESS_TAB_FOR_P2_'}
             {activePlayer === 2 && !isP2Done && 'PLAYER_2_WAITING_'}
-            {activePlayer === 2 && isP2Done && 'PRESS_ENTER_TO_SYNC_'}
+            {activePlayer === 2 && isP2Done && 'PRESS_TAB_TO_SYNC_'}
           </p>
           <div className="h-1 w-12 bg-[#39FF14] opacity-50" />
         </div>
