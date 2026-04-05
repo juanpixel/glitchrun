@@ -8,9 +8,7 @@ export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
   return (
     <div className="absolute inset-0 flex flex-col items-center bg-[#080C08]/95 z-50 p-6 md:p-12 overflow-y-auto">
       <div className="w-full max-w-4xl">
-        <h1 className="mb-12 text-[#39FF14] uppercase glitch-text tracking-[8px] md:tracking-[16px] text-center" data-text="SISTEMA_DE_ENTRENAMIENTO">
-          SISTEMA_DE_ENTRENAMIENTO
-        </h1>
+        <h2 className="text-matrix tracking-[4px] text-left" style={{ fontSize: '18px' }}>SISTEMA DE ENTRENAMIENTO</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Objetivos */}
@@ -19,7 +17,7 @@ export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
               01_OBJETIVO_MISIÓN
             </h3>
             <p className="text-sm text-[#1D9E75] leading-relaxed tracking-[1px]">
-              SOBREVIVE AL GLITCH. LAS ANOMALÍAS <span className="text-[#FF2D6B] font-bold">[ROJAS]</span> COMPROMETEN LA INTEGRIDAD DEL AGENTE. 
+              SOBREVIVE AL GLITCH. LAS ANOMALÍAS <span className="text-[#FF2D6B] font-bold">[ROJAS]</span> COMPROMETEN LA INTEGRIDAD DEL AGENTE.
               MANTÉN EL DESPLIEGUE PARA AUMENTAR EL ÍNDICE DE PUNTUACIÓN.
             </p>
           </div>
@@ -47,7 +45,7 @@ export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
               03_MODO_INDIVIDUAL
             </h3>
             <p className="text-sm text-[#1D9E75] leading-relaxed tracking-[1px]">
-              UN SOLO AGENTE DESPLEGADO. LA COLISIÓN RESULTA EN DESCONEXIÓN INMEDIATA. 
+              UN SOLO AGENTE DESPLEGADO. LA COLISIÓN RESULTA EN DESCONEXIÓN INMEDIATA.
               SISTEMA OPTIMIZADO PARA MÁXIMA VELOCIDAD.
             </p>
           </div>
@@ -58,14 +56,14 @@ export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
               04_MODO_COOPERATIVO
             </h3>
             <p className="text-sm text-[#1D9E75] leading-relaxed tracking-[1px]">
-              DOS AGENTES COMPARTIENDO EL MISMO SECTOR. EL SISTEMA PERMANECE ACTIVO MIENTRAS AL MENOS 
+              DOS AGENTES COMPARTIENDO EL MISMO SECTOR. EL SISTEMA PERMANECE ACTIVO MIENTRAS AL MENOS
               UN AGENTE SIGA FUNCIONAL. LA COORDINACIÓN ES CRÍTICA.
             </p>
           </div>
         </div>
 
         <div className="flex justify-center">
-          <button 
+          <button
             onClick={onBack}
             className="w-full max-w-xs py-4 bg-[#39FF14] text-[#080C08] font-black tracking-[4px] hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] text-sm"
           >

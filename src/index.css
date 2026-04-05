@@ -207,6 +207,14 @@ button:active {
   transform: translateY(2px);
 }
 
+.btn-selected {
+  border-color: var(--matrix) !important;
+  background: var(--void-3) !important;
+  box-shadow: 4px 0 0 var(--glitch) !important;
+  transform: translateX(-2px) !important;
+  color: var(--matrix) !important;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
 }

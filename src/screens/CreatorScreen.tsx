@@ -307,7 +307,7 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
                   <button
                     key={d}
                     onClick={() => setDifficulty(d)}
-                    className={`flex-1 py-3 text-[10px] font-black tracking-[1px] transition-all ${difficulty === d ? 'bg-matrix text-void border-matrix' : 'border border-void3 text-deep hover:border-matrix'}`}
+                    className={`flex-1 py-3 text-[10px] font-black tracking-[1px] transition-all ${difficulty === d ? 'btn-selected' : 'border border-void3 text-deep opacity-80 hover:opacity-100'}`}
                   >
                     {d === 'HARD' ? 'GOD' : d === 'EASY' ? 'FACIL' : 'NORMAL'}
                   </button>
