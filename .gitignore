@@ -31,6 +31,9 @@ build/
 Thumbs.db
 .DS_Store
 
+# Environment (keep example)
+!.env.example
+
 # Project specific
-MVP_glitchrun/node_modules/
-MVP_glitchrun/dist/
+coverage/
+*.log
