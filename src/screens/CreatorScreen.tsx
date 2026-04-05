@@ -36,11 +36,17 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
   const [toast, setToast] = useState<{ msg: string, type: 'success' | 'error' } | null>(null);
 
   // New character metadata
-  const [charName, setCharName] = useState('NUEVO_PERSONAJE');
-  const [creatorName, setCreatorName] = useState('CREADOR_ANONIMO');
+  const [charName, setCharName] = useState('');
+  const [creatorName, setCreatorName] = useState('');
 
   const activeSprite = editingPlayer === 1 ? p1Sprite : p2Sprite;
   const activeSetter = editingPlayer === 1 ? setP1Sprite : setP2Sprite;
+
+  const isCanvasValid = activeSprite.some(row =>
+    row.some(pixel => pixel !== '' && pixel !== COLORS.void)
+  );
+
+  const canPublish = isCanvasValid && charName.trim() !== '' && creatorName.trim() !== '';
 
   const updatePixel = (setter: React.Dispatch<React.SetStateAction<string[][]>>, x: number, y: number) => {
     setter(prev => {
@@ -277,8 +283,11 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
               </div>
               <button
                 onClick={() => setShowConfirmModal(true)}
-                disabled={isPublishing}
-                className={`px-8 py-2 bg-deep text-void font-bold text-xs tracking-[2px] self-end h-[34px] hover:bg-matrix transition-all ${isPublishing ? 'opacity-50' : ''}`}
+                disabled={isPublishing || !canPublish}
+                className={`px-8 py-2 font-bold text-xs tracking-[2px] self-end h-[34px] transition-all ${isPublishing || !canPublish
+                  ? 'bg-void3 text-deep opacity-50 cursor-not-allowed border border-void3'
+                  : 'bg-deep text-void hover:bg-matrix cursor-pointer'
+                  }`}
               >
                 {isPublishing ? 'ENVIANDO...' : 'PUBLICAR'}
               </button>
