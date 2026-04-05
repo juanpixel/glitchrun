@@ -179,6 +179,25 @@ Documentación de diseño e implementación disponible en [`/docs`](./docs/):
 
 ---
 
+## Easter egg — Código Konami
+
+Disponible únicamente en la pantalla de inicio. Activa un modal de créditos oculto.
+
+### Desktop
+Introduce el Konami Code clásico con el teclado:
+
+```
+↑ ↑ ↓ ↓ ← → ← → B A
+```
+
+### Mobile
+7 taps consecutivos en la pantalla de inicio en menos de 3 segundos (sin tocar botones ni elementos interactivos).
+
+### Modal de créditos
+Al activarse aparece `CREDITOS.EXE` con animación de pixel dissolve (300ms) y efecto glitch shift en el título. Se cierra con `Escape` o clic fuera del modal.
+
+---
+
 ## Licencia
 
 Proyecto académico / experimental. Sin licencia de uso libre por el momento.

@@ -10,6 +10,7 @@ interface MenuScreenProps {
 export const MenuScreen = ({ onSelectMode, onShowInstructions, onShowLeaderboard }: MenuScreenProps) => {
   const idleTimerRef = useRef<number | null>(null);
   const [showCredits, setShowCredits] = useState(false);
+  const lastOpenedRef = useRef<number>(0);
   
   // Easter Eggs State
   const [konamiProgress, setKonamiProgress] = useState(0);
@@ -34,6 +35,7 @@ export const MenuScreen = ({ onSelectMode, onShowInstructions, onShowLeaderboard
         const nextProgress = konamiProgress + 1;
         if (nextProgress === KONAMI_CODE.length) {
           setShowCredits(true);
+          lastOpenedRef.current = Date.now();
           setKonamiProgress(0);
         } else {
           setKonamiProgress(nextProgress);
@@ -67,6 +69,7 @@ export const MenuScreen = ({ onSelectMode, onShowInstructions, onShowLeaderboard
         const nextCount = tapCount + 1;
         if (nextCount === 7) {
           setShowCredits(true);
+          lastOpenedRef.current = Date.now();
           setTapCount(0);
         } else {
           setTapCount(nextCount);
@@ -144,7 +147,12 @@ export const MenuScreen = ({ onSelectMode, onShowInstructions, onShowLeaderboard
       {showCredits && (
         <div 
           className="fixed inset-0 z-[100] flex items-center justify-center bg-void/90 backdrop-blur-md p-4"
-          onClick={() => setShowCredits(false)}
+          onClick={() => {
+            // Prevent accidental closure if tapping quickly
+            if (Date.now() - lastOpenedRef.current > 1500) {
+              setShowCredits(false);
+            }
+          }}
         >
           <div 
             className="credits-modal-enter w-full max-w-sm bg-[#0D1A0D] border-[0.5px] border-[#1D9E75] p-10 flex flex-col items-center gap-6 text-center select-none shadow-[0_0_50px_rgba(29,158,117,0.1)]"
