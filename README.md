@@ -1,5 +1,3 @@
-# GLITCHRUN
-
 ```
  ██████╗ ██╗     ██╗████████╗ ██████╗██╗  ██╗██████╗ ██╗   ██╗███╗   ██╗
 ██╔════╝ ██║     ██║╚══██╔══╝██╔════╝██║  ██║██╔══██╗██║   ██║████╗  ██║
@@ -8,6 +6,12 @@
 ╚██████╔╝███████╗██║   ██║   ╚██████╗██║  ██║██║  ██║╚██████╔╝██║ ╚████║
  ╚═════╝ ╚══════╝╚═╝   ╚═╝    ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 ```
+
+## Demo
+
+ 👾: https://glitchrun-beta.vercel.app
+
+---
 
 > Arcade runner 2D con estética pixel-art retro y ranking global Desarrollado con IA
 
@@ -25,12 +29,6 @@
 GLITCHRUN es un runner 2D de scroll lateral infinito con estética cyberpunk y efectos glitch. El jugador controla un personaje pixel-art personalizable que debe esquivar obstáculos mientras la velocidad aumenta progresivamente. Incluye modo cooperativo, tres niveles de dificultad y tabla de ranking global persistida en Supabase.
 
 **Estado actual:** MVP funcional — gameplay completo, leaderboard en la nube, galería de personajes comunitaria.
-
----
-
-## Demo
-
- 👾: https://glitchrun-beta.vercel.app
 
 ---
 
