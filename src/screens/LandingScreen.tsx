@@ -140,7 +140,7 @@ const Idea = () => (
         <img
           alt="Glitchrun Experience"
           className="w-full h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-500 opacity-80 group-hover:opacity-100"
-          src="./public/assets/img/Proceso.png"
+          src="/assets/img/Proceso.png"
         />
         <div className="absolute inset-0 border-[20px] border-transparent group-hover:border-[#39FF14]/10 pointer-events-none transition-all"></div>
       </motion.div>
