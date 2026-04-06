@@ -12,6 +12,9 @@ import {
   CheckCircle2,
   Star
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { PRESETS } from '../constants/presets';
+import { GamePreview } from '../components/GamePreview';
 
 interface GlitchTextProps {
   text: string;
@@ -62,42 +65,59 @@ const Navbar = ({ onBack }: { onBack: () => void }) => {
   );
 };
 
-const Hero = ({ onBack }: { onBack: () => void }) => (
-  <section id="hero" className="container mx-auto px-6 flex flex-col items-center justify-center min-h-[80vh] text-center pt-24">
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      <h1 className="text-6xl md:text-9xl font-bold tracking-[12px] text-[#39FF14] uppercase mb-4">
-        <GlitchText text="GLITCHRUN" />
-      </h1>
-      <p className="text-[#39FF14] font-mono text-lg md:text-xl tracking-[4px] mb-8 max-w-2xl mx-auto opacity-80 uppercase">
-        Un juego retro construido con IA
-      </p>
-
-      <div className="bg-[#0D1A0D] border border-[#1a2e1a] p-8 max-w-3xl mx-auto relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-[#39FF14] opacity-20"></div>
-        <p className="font-mono text-[14px] md:text-[16px] leading-relaxed tracking-[2px] text-[#1D9E75] mb-8 normal-case">
-          La idea era simple — recrear la sensación de los arcades de los 90 usando IA como motor creativo. Un experimento personal para aprender haciendo algo divertido.
+const Hero = ({ onBack, activeSprite }: { onBack: () => void, activeSprite: string[][] }) => (
+  <section id="hero" className="container mx-auto px-6 flex flex-col items-center justify-center min-h-[85vh] pt-24">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full max-w-6xl">
+      {/* Left Column: Text Content */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        className="flex-1 text-left"
+      >
+        <h1 className="text-5xl md:text-8xl font-bold tracking-[12px] text-[#39FF14] uppercase mb-4 leading-tight">
+          <GlitchText text="GLITCHRUN" />
+        </h1>
+        <p className="text-[#39FF14] font-mono text-lg md:text-xl tracking-[4px] mb-8 opacity-80 uppercase">
+          Un juego retro construido con IA
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={onBack}
-            className="bg-[#39FF14] text-[#080C08] font-bold px-8 py-4 tracking-[4px] uppercase hover:shadow-[4px_4px_0_0_#00FFFF] active:translate-x-[2px] transition-all"
-          >
-            PLAY_NOW
-          </button>
 
-          <a
-            href="#idea"
-            className=" text-[#39FF14] font-bold px-8 py-4 tracking-[4px] uppercase hover:bg-[#0D1A0D] active:translate-x-[2px] transition-all text-center no-underline"
-          >
-            LEER_MAS
-          </a>
+        <div className="bg-[#0D1A0D]/50 border border-[#1a2e1a] p-8 relative overflow-hidden backdrop-blur-sm">
+          <div className="absolute top-0 left-0 w-full h-[1px] bg-[#39FF14] opacity-20"></div>
+          <p className="font-mono text-[14px] md:text-[15px] leading-relaxed tracking-[1px] text-[#1D9E75] mb-8 normal-case max-w-lg">
+            La idea era simple — recrear la sensación de los arcades de los 90 usando IA como motor creativo. Un experimento personal para aprender haciendo algo divertido.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              onClick={onBack}
+              className="bg-[#39FF14] text-[#080C08] font-bold px-8 py-4 tracking-[4px] uppercase hover:shadow-[4px_4px_0_0_#00FFFF] active:translate-x-[2px] transition-all text-sm"
+            >
+              PLAY_NOW
+            </button>
+
+            <a
+              href="#idea"
+              className="border border-[#39FF14]/30 text-[#39FF14] font-bold px-8 py-4 tracking-[4px] uppercase hover:bg-[#39FF14]/10 active:translate-x-[2px] transition-all text-center no-underline text-sm"
+            >
+              LEER_MAS
+            </a>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Right Column: Game Animation */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="flex-1 w-full flex justify-center lg:justify-end"
+      >
+        <GamePreview 
+          activeSprite={activeSprite} 
+          className="shadow-[0_0_50px_rgba(57,255,20,0.1)] border-[#39FF14]/20"
+        />
+      </motion.div>
+    </div>
   </section>
 );
 
@@ -296,12 +316,56 @@ const Footer = () => (
 );
 
 export const LandingScreen = ({ onBack }: { onBack: () => void }) => {
+  const [characterPool, setCharacterPool] = React.useState<string[][][]>([]);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
+  // Initial setup: combine presets and fetch DB characters
+  React.useEffect(() => {
+    const defaultSprites = Object.values(PRESETS).map(sprite => 
+      sprite.map(row => row.map(cell => cell === 'PLACEHOLDER' ? '#39FF14' : cell))
+    );
+
+    const loadCharacters = async () => {
+      const { data, error } = await supabase
+        .from('characters')
+        .select('sprite_data')
+        .limit(10)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        const dbSprites = data.map(item => item.sprite_data);
+        // Shuffle and combine
+        const combined = [...defaultSprites, ...dbSprites].sort(() => Math.random() - 0.5);
+        setCharacterPool(combined);
+      } else {
+        setCharacterPool(defaultSprites);
+      }
+    };
+
+    loadCharacters();
+  }, []);
+
+  // Timer for character rotation
+  React.useEffect(() => {
+    if (characterPool.length === 0) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % characterPool.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [characterPool]);
+
+  const activeSprite = characterPool.length > 0 
+    ? characterPool[currentIndex] 
+    : Object.values(PRESETS)[0].map(row => row.map(cell => cell === 'PLACEHOLDER' ? '#39FF14' : cell));
+
   return (
-    <div className="fixed inset-0 bg-[#080C08] z-[100] overflow-y-auto selection:bg-[#39FF14] selection:text-[#080C08]">
+    <div className="fixed inset-0 bg-[#080C08] z-[100] overflow-y-auto selection:bg-[#39FF14] selection:text-[#080C08] scroll-smooth">
       <div className="scanline" />
       <Navbar onBack={onBack} />
       <main className="space-y-12">
-        <Hero onBack={onBack} />
+        <Hero onBack={onBack} activeSprite={activeSprite} />
         <Idea />
         <TechStack />
         <Process />
