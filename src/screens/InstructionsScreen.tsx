@@ -2,9 +2,10 @@ import { COLORS } from '../constants/colors';
 
 interface InstructionsScreenProps {
   onBack: () => void;
+  onLearnMore: () => void;
 }
 
-export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
+export const InstructionsScreen = ({ onBack, onLearnMore }: InstructionsScreenProps) => {
   return (
     <div className="absolute inset-0 flex flex-col items-center bg-[#080C08]/95 z-50 p-6 md:p-12 overflow-y-auto">
       <div className="w-full max-w-4xl">
@@ -62,12 +63,19 @@ export const InstructionsScreen = ({ onBack }: InstructionsScreenProps) => {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center">
           <button
             onClick={onBack}
             className="w-full max-w-xs py-4 bg-[#39FF14] text-[#080C08] font-black tracking-[4px] hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(57,255,20,0.3)] text-sm"
           >
             ENTENDIDO
+          </button>
+          
+          <button 
+            onClick={onLearnMore}
+            className="mt-8 text-[10px] text-[#1D9E75] tracking-[2px] font-mono opacity-60 hover:opacity-100 hover:text-[#39FF14] transition-all underline underline-offset-8 uppercase"
+          >
+            ( CONOCE_MÁS )
           </button>
         </div>
       </div>

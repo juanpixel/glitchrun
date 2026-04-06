@@ -178,7 +178,6 @@ export const CreatorScreen = ({ gameMode, onBack, onStart }: CreatorScreenProps)
         </button>
         <h1
           className="text-matrix uppercase tracking-[8px] m-0 glitch-text text-left"
-          data-text="CREATOR_MODE"
           style={{ fontSize: '24px' }}
         >
           CREATOR_MODE

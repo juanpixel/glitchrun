@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { PRESETS } from './constants/presets';
 import { GameState } from './game/types';
 import { useGameLoop } from './hooks/useGameLoop';
@@ -12,17 +12,35 @@ import { GameOverScreen } from './screens/GameOverScreen';
 import { InstructionsScreen } from './screens/InstructionsScreen';
 import { RecordInputScreen } from './screens/RecordInputScreen';
 import { LeaderboardScreen } from './screens/LeaderboardScreen';
+import { LandingScreen } from './screens/LandingScreen';
 
 // Components
 import { HUD } from './components/HUD';
 import { MobileControls } from './components/MobileControls';
 
-type UIStatus = 'START' | 'CREATOR' | 'PLAYING' | 'GAMEOVER' | 'INSTRUCTIONS' | 'RECORD_INPUT' | 'LEADERBOARD';
+type UIStatus = 'START' | 'CREATOR' | 'PLAYING' | 'GAMEOVER' | 'INSTRUCTIONS' | 'RECORD_INPUT' | 'LEADERBOARD' | 'LANDING';
 
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [uiStatus, setUiStatus] = useState<UIStatus>('START');
   const [scores, setScores] = useState({ p1: 0, p2: 0 });
+
+  // Simple Path-based Routing
+  useEffect(() => {
+    // Initial check
+    if (window.location.pathname === '/home') {
+      setUiStatus('LANDING');
+    }
+
+    // Handle back/forward button
+    const handlePopState = () => {
+      if (window.location.pathname === '/home') setUiStatus('LANDING');
+      else setUiStatus('START');
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
   const [highScore, setHighScore] = useState(0);
   const [gameMode, setGameMode] = useState<'SINGLE' | 'COOP'>('SINGLE');
   const [pendingScore, setPendingScore] = useState(0);
@@ -145,7 +163,22 @@ export default function App() {
       )}
 
       {uiStatus === 'INSTRUCTIONS' && (
-        <InstructionsScreen onBack={handleExit} />
+        <InstructionsScreen 
+          onBack={handleExit} 
+          onLearnMore={() => {
+            setUiStatus('LANDING');
+            window.history.pushState(null, '', '/home');
+          }}
+        />
+      )}
+
+      {uiStatus === 'LANDING' && (
+        <LandingScreen 
+          onBack={() => {
+            setUiStatus('START');
+            window.history.pushState(null, '', '/');
+          }}
+        />
       )}
 
       {uiStatus === 'LEADERBOARD' && (
