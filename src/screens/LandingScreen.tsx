@@ -50,7 +50,7 @@ const Navbar = ({ onBack }: { onBack: () => void }) => {
         ))}
       </nav>
       <div className="flex items-center gap-4">
-        <button 
+        <button
           onClick={onBack}
           className="bg-transparent border border-[#39FF14] px-4 py-1 text-[#39FF14] font-mono font-bold tracking-[2px] hover:bg-[#39FF14] hover:text-[#080C08] transition-all min-h-0"
         >
@@ -138,9 +138,9 @@ const Idea = () => (
         className="relative group aspect-video overflow-hidden border-2 border-[#1a2e1a]"
       >
         <img
-          alt="Retro computer workstation"
-          className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500 opacity-60 group-hover:opacity-100"
-          src="https://picsum.photos/seed/glitchrun-arcade/1200/800"
+          alt="Glitchrun Experience"
+          className="w-full h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-500 opacity-80 group-hover:opacity-100"
+          src="./public/assets/img/Proceso.png"
         />
         <div className="absolute inset-0 border-[20px] border-transparent group-hover:border-[#39FF14]/10 pointer-events-none transition-all"></div>
       </motion.div>
