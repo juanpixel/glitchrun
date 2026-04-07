@@ -112,8 +112,8 @@ const Hero = ({ onBack, activeSprite }: { onBack: () => void, activeSprite: stri
         transition={{ duration: 0.8, delay: 0.2 }}
         className="flex-1 w-full flex justify-center lg:justify-end"
       >
-        <GamePreview 
-          activeSprite={activeSprite} 
+        <GamePreview
+          activeSprite={activeSprite}
           className="shadow-[0_0_50px_rgba(57,255,20,0.1)] border-[#39FF14]/20"
         />
       </motion.div>
@@ -302,10 +302,12 @@ const Footer = () => (
       ©2024 GLITCHRUN_SYSTEMS [V1.0]
     </div>
     <div className="flex gap-8">
-      {['DOCS', 'GITHUB', 'SUPPORT'].map((item) => (
+      {['GITHUB'].map((item) => (
         <a
           key={item}
-          href="#"
+          href="https://github.com/juanpixel/glitchrun"
+          target="_blank"
+          rel="noopener noreferrer"
           className="font-mono uppercase tracking-[2px] text-[10px] text-[#1D9E75] hover:text-[#39FF14] hover:underline underline-offset-4"
         >
           {item}
@@ -321,7 +323,7 @@ export const LandingScreen = ({ onBack }: { onBack: () => void }) => {
 
   // Initial setup: combine presets and fetch DB characters
   React.useEffect(() => {
-    const defaultSprites = Object.values(PRESETS).map(sprite => 
+    const defaultSprites = Object.values(PRESETS).map(sprite =>
       sprite.map(row => row.map(cell => cell === 'PLACEHOLDER' ? '#39FF14' : cell))
     );
 
@@ -356,8 +358,8 @@ export const LandingScreen = ({ onBack }: { onBack: () => void }) => {
     return () => clearInterval(interval);
   }, [characterPool]);
 
-  const activeSprite = characterPool.length > 0 
-    ? characterPool[currentIndex] 
+  const activeSprite = characterPool.length > 0
+    ? characterPool[currentIndex]
     : Object.values(PRESETS)[0].map(row => row.map(cell => cell === 'PLACEHOLDER' ? '#39FF14' : cell));
 
   return (
